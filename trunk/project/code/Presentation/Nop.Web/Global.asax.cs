@@ -93,6 +93,26 @@ namespace Nop.Web
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
+            string outUrl = Request.Url.ToString().ToLower();
+            string inUrl = Request.Url.ToString().ToLower().Replace(@"(", string.Empty).Replace(@")", string.Empty);
+            inUrl = inUrl.Replace("https://", "");
+            inUrl = inUrl.Replace("http://", "");
+            if (!inUrl.Contains("www."))
+            {
+                inUrl = "www." + inUrl;
+            }
+            if (outUrl.ToLower().Contains("https://"))
+            {
+                inUrl = "https://" + inUrl;
+            }
+            else
+            {
+                inUrl = "http://" + inUrl;
+            }
+            if (!outUrl.Equals(inUrl))
+            {
+                Response.RedirectPermanent(inUrl);
+            }
             //ignore static resources
             var webHelper = EngineContext.Current.Resolve<IWebHelper>();
             if (webHelper.IsStaticResource(this.Request))
@@ -123,15 +143,7 @@ namespace Nop.Web
                 //store a value indicating whether profiler was started
                 HttpContext.Current.Items["nop.MiniProfilerStarted"] = true;
             }
-
-            string inUrl = Request.Url.ToString().ToLower().Replace(@"(", string.Empty).Replace(@")", string.Empty);
-            inUrl = inUrl.Replace("https://", "");
-            inUrl = inUrl.Replace("http://", "");
-            if (!inUrl.Contains("www."))
-            {
-                inUrl = "www." + inUrl;
-            }
-            Response.RedirectPermanent(inUrl);
+            
         }
 
         protected void Application_EndRequest(object sender, EventArgs e)
