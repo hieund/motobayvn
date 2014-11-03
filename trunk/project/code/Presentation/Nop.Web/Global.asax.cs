@@ -27,11 +27,11 @@ namespace Nop.Web
         {
             routes.IgnoreRoute("favicon.ico");
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-            
+
             //register custom routes (plugins, etc)
             var routePublisher = EngineContext.Current.Resolve<IRoutePublisher>();
             routePublisher.RegisterRoutes(routes);
-            
+
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
@@ -47,7 +47,7 @@ namespace Nop.Web
 
             //model binders
             ModelBinders.Binders.Add(typeof(BaseNopModel), new NopModelBinder());
-            
+
             bool databaseInstalled = DataSettingsHelper.DatabaseIsInstalled();
             if (databaseInstalled)
             {
@@ -63,7 +63,7 @@ namespace Nop.Web
             //Registering some regular mvc stuff
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
-            
+
             //fluent validation
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
             ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new NopValidatorFactory()));
@@ -123,6 +123,15 @@ namespace Nop.Web
                 //store a value indicating whether profiler was started
                 HttpContext.Current.Items["nop.MiniProfilerStarted"] = true;
             }
+
+            string inUrl = Request.Url.ToString().ToLower().Replace(@"(", string.Empty).Replace(@")", string.Empty);
+            inUrl = inUrl.Replace("https://", "");
+            inUrl = inUrl.Replace("http://", "");
+            if (!inUrl.Contains("www."))
+            {
+                inUrl = "www." + inUrl;
+            }
+            Response.RedirectPermanent(inUrl);
         }
 
         protected void Application_EndRequest(object sender, EventArgs e)
@@ -137,7 +146,7 @@ namespace Nop.Web
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        { 
+        {
             //we don't do it in Application_BeginRequest because a user is not authenticated yet
             SetWorkingCulture();
         }
@@ -171,7 +180,7 @@ namespace Nop.Web
                 }
             }
         }
-        
+
         protected void SetWorkingCulture()
         {
             if (!DataSettingsHelper.DatabaseIsInstalled())
@@ -214,7 +223,7 @@ namespace Nop.Web
         {
             if (exc == null)
                 return;
-            
+
             if (!DataSettingsHelper.DatabaseIsInstalled())
                 return;
 
