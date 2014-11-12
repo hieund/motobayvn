@@ -178,7 +178,7 @@ namespace Nop.Web.Framework.Security
             var filesToCheck = new List<string>();
             filesToCheck.Add(Path.Combine(rootDir, "Global.asax"));
             filesToCheck.Add(Path.Combine(rootDir, "web.config"));
-            filesToCheck.Add(Path.Combine(rootDir,"App_Data\\InstalledPlugins.txt"));
+            filesToCheck.Add(Path.Combine(rootDir, "App_Data\\InstalledPlugins.txt"));
             filesToCheck.Add(Path.Combine(rootDir, "App_Data\\Settings.txt"));
             return filesToCheck;
         }
